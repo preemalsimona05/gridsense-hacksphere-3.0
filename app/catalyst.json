@@ -1,0 +1,14 @@
+{
+  "appsail": [
+    {
+      "source": "appsail-python",
+      "name": "forecast-api"
+    }
+  ],
+  "slate": [
+    {
+      "name": "dashboard",
+      "source": "D:\\HACKSPHERE\\app\\dashboard"
+    }
+  ]
+}

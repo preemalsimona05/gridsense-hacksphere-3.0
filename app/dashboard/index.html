@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#08111f">
+  <title>GridSense | Demand Command Center</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js" defer></script>
+  <script src="main.js" defer></script>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="GridSense home">
+        <span class="brand-mark"><span></span><span></span><span></span></span>
+        <span><strong>GridSense</strong><small>HackSphere 3.0</small></span>
+      </a>
+      <div class="topbar-actions">
+        <div class="backend-status" id="backendStatus"><span class="status-dot"></span><span>Checking backend</span></div>
+        <button class="icon-button" id="themeToggle" aria-label="Toggle light and dark theme">☼</button>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div>
+          <p class="eyebrow">MICROGRID OPERATIONS / LIVE FORECAST</p>
+          <h1>Demand, <em>in focus.</em></h1>
+          <p class="hero-copy">A decision cockpit for the next 24 hours of energy demand. Forecast the load, route the grid, and keep every critical moment visible.</p>
+        </div>
+        <div class="hero-meta"><span class="pulse"></span><span>Forecast window</span><strong id="windowLabel">—</strong></div>
+      </section>
+
+      <section class="alert-banner hidden" id="alertBanner" role="alert">
+        <span class="alert-icon">!</span>
+        <div><strong>Critical overload detected</strong><p id="alertText"></p></div>
+        <button class="dismiss" id="dismissAlert" aria-label="Dismiss alert">×</button>
+      </section>
+
+      <section class="summary-grid" aria-label="Forecast summary">
+        <article class="metric-card"><div class="metric-label">Peak demand <span class="metric-icon orange">↗</span></div><div class="metric-value" id="peakDemand">—</div><div class="metric-sub" id="peakTime">Awaiting forecast</div></article>
+        <article class="metric-card"><div class="metric-label">Storage hours <span class="metric-icon blue">◒</span></div><div class="metric-value" id="storageHours">—</div><div class="metric-sub">Renewable dispatch windows</div></article>
+        <article class="metric-card"><div class="metric-label">Overload hours <span class="metric-icon red">!</span></div><div class="metric-value" id="overloadHours">—</div><div class="metric-sub">Demand ≥ 200 kW</div></article>
+        <article class="metric-card"><div class="metric-label">Battery reserve <span class="metric-icon green">◉</span></div><div class="metric-value" id="batteryReserve">—</div><div class="metric-sub" id="batterySub">Dispatch simulation</div></article>
+      </section>
+
+      <section class="workspace-grid">
+        <aside class="control-panel panel">
+          <div class="panel-heading"><div><p class="eyebrow">INPUT CONTROL</p><h2>Forecast source</h2></div><span class="step-badge">01</span></div>
+          <button class="sample-button" id="loadSample"><span class="button-symbol">✦</span><span><strong>Load sample 24h</strong><small>Use the backend demo window</small></span><span class="arrow">→</span></button>
+          <div class="or-divider"><span>or upload telemetry</span></div>
+          <label class="drop-zone" id="dropZone" for="csvInput">
+            <input id="csvInput" type="file" accept=".csv,text/csv">
+            <span class="upload-icon">↑</span><strong>Drop a CSV here</strong><span>or click to browse</span><small>timestamp · ambient_temp_c · humidity_pct · solar_irradiance_wm2</small>
+          </label>
+          <div class="file-chip hidden" id="fileChip"><span>▣</span><span id="fileName"></span><button id="clearFile" aria-label="Remove file">×</button></div>
+          <div class="or-divider"><span>or enter manually</span></div>
+          <button class="outline-button" id="manualToggle"><span>＋</span> Open 24-row weather form</button>
+          <div class="manual-form hidden" id="manualForm">
+            <div class="form-toolbar"><strong>24-hour window</strong><button class="text-button" id="fillManual">Fill demo values</button></div>
+            <div class="manual-table-wrap"><table class="manual-table"><thead><tr><th>Time</th><th>Temp °C</th><th>RH %</th><th>Solar W/m²</th></tr></thead><tbody id="manualRows"></tbody></table></div>
+          </div>
+          <button class="run-button" id="runForecast"><span class="run-icon">▶</span><span id="runLabel">Run forecast</span><span class="button-spinner hidden"></span></button>
+          <p class="input-hint" id="inputHint">Choose a source to begin. Sample data is ready to use.</p>
+        </aside>
+
+        <div class="results-column">
+          <section class="panel chart-panel">
+            <div class="panel-heading chart-heading"><div><p class="eyebrow">DEMAND TRAJECTORY</p><h2>24-hour load forecast</h2></div><div class="legend"><span><i class="line-key demand-key"></i>Predicted demand</span><span><i class="line-key storage-key"></i>Storage window</span></div></div>
+            <div class="chart-wrap"><canvas id="demandChart" aria-label="Predicted demand line chart"></canvas><div class="empty-state" id="chartEmpty"><span>⌁</span><strong>Your forecast will appear here</strong><small>Load a sample or upload telemetry to begin</small></div></div>
+            <div class="thresholds"><span><i class="threshold orange-line"></i>160 kW storage threshold</span><span><i class="threshold red-line"></i>200 kW critical threshold</span></div>
+          </section>
+          <div class="lower-grid">
+            <section class="panel battery-panel"><div class="panel-heading"><div><p class="eyebrow">ENERGY RESERVE</p><h2>Battery state of charge</h2></div><span class="soc-pill" id="socPill">—</span></div><div class="battery-chart-wrap"><canvas id="batteryChart" aria-label="Battery state of charge chart"></canvas><div class="empty-state compact" id="batteryEmpty"><span>◉</span><small>Dispatch simulation appears after forecast</small></div></div></section>
+            <section class="panel log-panel"><div class="panel-heading"><div><p class="eyebrow">ACTIVITY</p><h2>System log</h2></div><button class="text-button" id="clearLog">Clear</button></div><div class="log-list" id="logList"><div class="log-empty">No runs yet. The system is standing by.</div></div></section>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel table-panel">
+        <div class="panel-heading"><div><p class="eyebrow">DISPATCH SCHEDULE</p><h2>Hourly operating plan</h2></div><span class="row-count" id="rowCount">0 hours</span></div>
+        <div class="table-wrap"><table class="results-table"><thead><tr><th>Forecast hour</th><th>Predicted demand</th><th>Grid mode</th><th>System state</th></tr></thead><tbody id="resultsBody"><tr class="table-empty"><td colspan="4">No forecast loaded yet</td></tr></tbody></table></div>
+      </section>
+    </main>
+    <footer><span>GRIDSENSE / SMART ENERGY MICROGRID</span><span>Powered by Zoho Catalyst QuickML</span></footer>
+  </div>
+  <div class="toast hidden" id="toast" role="status"></div>
+</body>
+</html>
