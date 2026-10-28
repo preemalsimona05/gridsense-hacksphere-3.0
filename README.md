@@ -184,7 +184,8 @@ The battery demonstration uses these transparent assumptions:
 - Hourly dispatch table with mode and system state badges
 - Activity log for recent forecast runs
 - Responsive layout with light and dark themes
-
+\n+## Screenshots\n+\n+<p align=\"center\">\n+  <img src=\"app/dashboard/screenshots/dashboard-overview.png\" alt=\"GridSense dashboard overview\" width=\"1000\" />\n+</p>\n+\n+<p align=\"center\">\n+  <img src=\"app/dashboard/screenshots/demand-forecast.png\" alt=\"Demand forecast chart\" width=\"1000\" />\n+</p>\n+\n+<p align=\"center\">\n+  <img src=\"app/dashboard/screenshots/battery-and-activity.png\" alt=\"Battery state and activity log\" width=\"1000\" />\n+</p>\n+\n+<p align=\"center\">\n+  <img src=\"app/dashboard/screenshots/manual-input.png\" alt=\"Manual weather input form\" width=\"600\" />\n+</p>\n+\n+<p align=\"center\">\n+  <img src=\"app/dashboard/screenshots/hourly-dispatch.png\" alt=\"Hourly operating plan\" width=\"1000\" />\n+</p>\n \n ## Repository map\n*** End Patch"} 
+                                                                                                                                                                                                    
 ## Repository map
 
 ```text
